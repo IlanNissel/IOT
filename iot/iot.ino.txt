@@ -1,0 +1,42 @@
+#include <ESP8266WiFi.h>
+const char* ssid = "Eventspace5-2-A";
+const char* password = "EventSpace";
+WiFiServer server(80);
+void setup() {
+Serial.begin(9600);
+WiFi.begin(ssid, password);
+while (WiFi.status() != WL_CONNECTED) {
+ delay(500);
+ Serial.print(".");
+}
+Serial.println("WiFi connected");
+server.begin();
+Serial.println("Server started");
+Serial.print("The URL to connect: http://");
+Serial.print(WiFi.localIP());
+Serial.println("/");
+}
+void loop() {
+// Check if a client (browser) has connected
+WiFiClient client = server.available();
+if (!client) {
+ return;
+}
+ client.println("HTTP/1.1 200 OK");
+ client.println("Content-Type: text/html");
+client.println("Refresh: 5");
+client.println(""); //important
+ client.println("<!DOCTYPE HTML>");
+
+ client.println("<html>");
+ client.println("<head>");
+ client.println("<title>CIJE Arduino Project</title>");
+ client.println("</head>");
+ client.println("<body>");
+ int sensorReading = digitalRead(10);
+ Serial.println(sensorReading);
+ client.println("analog input is");
+ client.println(sensorReading);
+ client.println("</body>");
+ client.println("</html>");
+}
